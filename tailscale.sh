@@ -59,6 +59,7 @@ rm -rf "${dir}"
 systemd-sysext refresh > /dev/null 2>&1
 systemctl daemon-reload > /dev/null
 
+systemctl enable systemd-
 systemctl enable tailscaled --now
 
 echo "done."
