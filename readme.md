@@ -10,4 +10,6 @@ Some key points:
   If you don't work within the writable lines, your changes will be lost on the
   next update.
 
+- The Deck's SteamOS 3.0 is based on Arch Linux,
+
 [official-guide]: https://tailscale.com/blog/steam-deck/
