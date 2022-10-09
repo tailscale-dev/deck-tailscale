@@ -20,4 +20,6 @@ comes up automatically on boot and (2) survives system updates.
 ## How it works
 
 The Deck runs SteamOS 3, which is derived from Arch and thus uses a software
-suite called systemd to manage services.
+suite called systemd to manage services. The `tailscaled.service` file is a
+systemd unit file, which tells systemd how to start and manage the tailscale
+daemon.
