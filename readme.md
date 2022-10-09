@@ -6,6 +6,10 @@ comes up automatically on boot and (2) survives system updates.
 
 ## Installing Tailscale
 
-Download the attached
+1. Download the attached `tailscale.sh` and `tailscaled.service` files to your
+   Deck.
+2. Copy the `tailscaled.service` file to `/etc/systemd/system/`.
+3. Run `sudo bash tailscale.sh` to install Tailscale (or update the existing
+   installation).
 
 [official-guide]: https://tailscale.com/blog/steam-deck/
