@@ -11,7 +11,9 @@ comes up automatically on boot and (2) survives system updates.
 2. Copy the `tailscaled.service` file to `/etc/systemd/system/`.
 3. Run `sudo bash tailscale.sh` to install Tailscale (or update the existing
    installation).
-4. Run `sudo tailscale up --qr
+4. Run `sudo tailscale up --qr --operator=deck --ssh` to have Tailscale generate
+   a login QR code. Scan the code with your phone and authenticate with
+   Tailscale to bring your Deck onto your network.
 
 [official-guide]: https://tailscale.com/blog/steam-deck/
 
