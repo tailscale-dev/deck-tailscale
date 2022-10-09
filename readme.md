@@ -15,4 +15,11 @@ comes up automatically on boot and (2) survives system updates.
    a login QR code. Scan the code with your phone and authenticate with
    Tailscale to bring your Deck onto your network.
 
+## How it works
+
+It uses the same system extension method as the official guide, but we put the
+`tailscaled.service` file directly in `/etc/systemd/system/` because it's
+actually safe to put things there. Changes in `/etc/` are preserved in
+`/lib/overlays/etc/upper/` via an overlayfs, meaning that they survive updates.
+
 [official-guide]: https://tailscale.com/blog/steam-deck/
