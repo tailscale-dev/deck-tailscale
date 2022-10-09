@@ -1,7 +1,7 @@
 # Tailscale on the Steam Deck
 
-This process is derived from the [official guide][official-guide], but with some
-tweaks to make the process smoother and produce an installation that both (1)
+This process is derived from the [official guide][official-guide], but lightly
+tweaked to make the process smoother and produce an installation that both (1)
 comes up automatically on boot and (2) survives system updates.
 
 ## Installing Tailscale
@@ -16,10 +16,3 @@ comes up automatically on boot and (2) survives system updates.
    Tailscale to bring your Deck onto your network.
 
 [official-guide]: https://tailscale.com/blog/steam-deck/
-
-## How it works
-
-The Deck runs SteamOS 3, which is derived from Arch and thus uses a software
-suite called systemd to manage services. The `tailscaled.service` file is a
-systemd unit file, which tells systemd how to start and manage the tailscale
-daemon.
