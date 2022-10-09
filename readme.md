@@ -11,5 +11,8 @@ comes up automatically on boot and (2) survives system updates.
 2. Copy the `tailscaled.service` file to `/etc/systemd/system/`.
 3. Run `sudo bash tailscale.sh` to install Tailscale (or update the existing
    installation).
+4. Run `sudo tailscale up --qr
 
 [official-guide]: https://tailscale.com/blog/steam-deck/
+
+## How it works
