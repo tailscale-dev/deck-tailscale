@@ -18,3 +18,6 @@ comes up automatically on boot and (2) survives system updates.
 [official-guide]: https://tailscale.com/blog/steam-deck/
 
 ## How it works
+
+The Deck runs SteamOS 3, which is derived from Arch and thus uses a software
+suite called systemd to manage services.
