@@ -49,9 +49,6 @@ mkdir -p /var/lib/extensions
 rm -rf /var/lib/extensions/tailscale
 cp -rf tailscale /var/lib/extensions/
 
-mkdir -p /etc/default
-touch /etc/default/tailscaled
-
 # return to our original directory (silently) and clean up
 popd > /dev/null
 rm -rf "${dir}"
