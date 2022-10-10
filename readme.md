@@ -20,6 +20,7 @@ comes up automatically on boot and (2) survives system updates.
 It uses the same system extension method as the official guide, but we put the
 `tailscaled.service` file directly in `/etc/systemd/system/` because it's
 actually safe to put things there. Changes in `/etc/` are preserved in
-`/lib/overlays/etc/upper/` via an overlayfs, meaning that they survive updates.
+`/var/lib/overlays/etc/upper/` via an overlayfs, meaning that they survive
+updates.
 
 [official-guide]: https://tailscale.com/blog/steam-deck/
