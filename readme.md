@@ -1,8 +1,9 @@
 # Tailscale on the Steam Deck
 
 This process is derived from the [official guide][official-guide], but lightly
-tweaked to make the process smoother and produce an installation that
-comes up automatically on boot and survives system updates.
+tweaked to make the process smoother and produce an installation that comes up
+automatically on boot (no need to enter desktop mode) and survives system
+updates.
 
 ## Installing Tailscale
 
