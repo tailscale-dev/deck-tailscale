@@ -1,7 +1,5 @@
 # Tailscale on the Steam Deck
 
-⚠️ This may not work for SteamOS 3.4+. I'm working on it. ⚠️
-
 This process is derived from the [official guide][official-guide], but lightly
 tweaked to make the process smoother and produce an installation that comes up
 automatically on boot (no need to enter desktop mode) and survives system
