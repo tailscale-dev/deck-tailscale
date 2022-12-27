@@ -9,7 +9,7 @@ updates.
 
 ⚠️ This process will probably fail if you are accessing the terminal over Tailscale
 SSH, as it seems to be locked in a chroot jail. You should start and connect through
-the standard SSH server instead.
+the standard SSH server instead. Suggestions for how to fix this are welcomed.
 
 1. Download the attached `tailscale.sh` and `tailscaled.service` files to your
    Deck.
