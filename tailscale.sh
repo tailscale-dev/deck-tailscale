@@ -53,10 +53,11 @@ cp -rf tailscale /var/lib/extensions/
 popd > /dev/null
 rm -rf "${dir}"
 
+systemctl enable systemd-sysext --now
+
 systemd-sysext refresh > /dev/null 2>&1
 systemctl daemon-reload > /dev/null
 
-systemctl enable systemd-sysext --now
 systemctl enable tailscaled --now
 
 echo "done."
