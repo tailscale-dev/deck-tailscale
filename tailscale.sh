@@ -16,18 +16,22 @@ pushd . > /dev/null
 dir="$(mktemp -d)"
 cd "${dir}"
 
-echo -n "Installing Tailscale: Getting version..."
+echo -n "Getting version..."
 
 # get info for the latest version of Tailscale
 tarball="$(curl -s 'https://pkgs.tailscale.com/stable/?mode=json' | jq -r .Tarballs.amd64)"
 version="$(echo ${tarball} | cut -d_ -f2)"
 
-echo -n "got ${version}. Downloading..."
+echo "got ${version}."
+
+echo -n "Downloading..."
 
 # download the Tailscale package itself
 curl -s "https://pkgs.tailscale.com/stable/${tarball}" -o tailscale.tgz
 
-echo -n "done. Installing..."
+echo "done."
+
+echo -n "Installing..."
 
 # extract the tailscale binaries
 tar xzf tailscale.tgz
@@ -53,6 +57,10 @@ cp -rf tailscale /var/lib/extensions/
 popd > /dev/null
 rm -rf "${dir}"
 
+echo "done."
+
+echo -n "Starting services..."
+
 if systemctl is-enabled --quiet systemd-sysext && systemctl is-active --quiet systemd-sysext; then
   echo "systemd-sysext is already enabled and active"
 else
@@ -69,4 +77,6 @@ else
 fi
 
 echo "done."
+
+
 echo "If updating, reboot or run the following to finish the process: sudo systemctl restart tailscaled"
