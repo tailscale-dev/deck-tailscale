@@ -62,8 +62,8 @@ fi
 systemd-sysext refresh > /dev/null 2>&1
 systemctl daemon-reload > /dev/null
 
-if systemctl is-enabled --quiet systemd-sysext && systemctl is-active --quiet systemd-sysext; then
-  echo "tailscaled is already active"
+if systemctl is-enabled --quiet tailscaled && systemctl is-active --quiet tailscaled; then
+  echo "tailscaled is already enabled and active"
 else
   systemctl enable tailscaled --now
 fi
