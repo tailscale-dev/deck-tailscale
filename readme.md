@@ -7,12 +7,12 @@ updates.
 
 ## Installing Tailscale
 
-⚠️ This process will probably fail if you are accessing the terminal over Tailscale
-SSH, as it seems to be locked in a chroot jail. You should start and connect through
-the standard SSH server instead. Suggestions for how to fix this are welcomed.
+⚠️ This process will probably fail if you are accessing the terminal over
+Tailscale SSH, as it seems to be locked in a chroot jail. You should start and
+connect through the standard SSH server instead. Suggestions for how to fix this
+are welcomed.
 
-1. Download the attached `tailscale.sh` and `tailscaled.service` files to your
-   Deck.
+1. Clone this repo to your Deck.
 2. Copy the `tailscaled.service` file to `/etc/systemd/system/`.
 3. Run `sudo bash tailscale.sh` to install Tailscale (or update the existing
    installation).
@@ -29,3 +29,12 @@ actually safe to put things there. Changes in `/etc/` are preserved in
 updates.
 
 [official-guide]: https://tailscale.com/blog/steam-deck/
+
+## Future work (PRs welcome!)
+
+- Figure out how to make this work over Tailscale SSH.
+- Copy the `tailscaled.service` file to `/etc/systemd/system/` automatically.
+- Automatically resolve the NetworkManager/systemd-resolved warning in
+  `tailscale status` (Is
+  [this solution](https://tailscale.com/kb/1188/linux-dns/#networkmanager--systemd-resolved)
+  safe to do on the Deck?)
