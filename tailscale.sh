@@ -53,12 +53,20 @@ cp -rf tailscale /var/lib/extensions/
 popd > /dev/null
 rm -rf "${dir}"
 
-systemctl enable systemd-sysext --now
+if systemctl is-enabled --quiet systemd-sysext && systemctl is-active --quiet systemd-sysext; then
+  echo "systemd-sysext is already enabled and active"
+else
+  systemctl enable systemd-sysext --now
+fi
 
 systemd-sysext refresh > /dev/null 2>&1
 systemctl daemon-reload > /dev/null
 
-systemctl enable tailscaled --now
+if systemctl is-enabled --quiet systemd-sysext && systemctl is-active --quiet systemd-sysext; then
+  echo "tailscaled is already active"
+else
+  systemctl enable tailscaled --now
+fi
 
 echo "done."
 echo "If updating, reboot or run the following to finish the process: sudo systemctl restart tailscaled"
