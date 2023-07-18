@@ -29,12 +29,3 @@ actually safe to put things there. Changes in `/etc/` are preserved in
 updates.
 
 [official-guide]: https://tailscale.com/blog/steam-deck/
-
-## Future work (PRs welcome!)
-
-- Figure out how to make this work over Tailscale SSH.
-- Copy the `tailscaled.service` file to `/etc/systemd/system/` automatically.
-- Automatically resolve the NetworkManager/systemd-resolved warning in
-  `tailscale status` (Is
-  [this solution](https://tailscale.com/kb/1188/linux-dns/#networkmanager--systemd-resolved)
-  safe to do on the Deck?)
