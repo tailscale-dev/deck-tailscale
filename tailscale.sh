@@ -73,7 +73,7 @@ fi
 
 echo "done."
 
-echo -n "Starting services..."
+echo "Starting services..."
 
 if systemctl is-enabled --quiet systemd-sysext && systemctl is-active --quiet systemd-sysext; then
   echo "systemd-sysext is already enabled and active"
@@ -91,4 +91,4 @@ else
   systemctl enable tailscaled --now
 fi
 
-echo "done."
+echo "Tailscale installed and ready."
