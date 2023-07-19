@@ -53,9 +53,22 @@ mkdir -p /var/lib/extensions
 rm -rf /var/lib/extensions/tailscale
 cp -rf tailscale /var/lib/extensions/
 
+# copy the systemd files into place
+cp -rf $tar_dir/systemd/tailscaled.service /etc/systemd/system
+
+# copy in the defaults file if it doesn't already exist
+if ! test -f /etc/default/tailscaled; then
+  cp -rf $tar_dir/systemd/tailscaled.defaults /etc/default/tailscaled
+fi
+
 # return to our original directory (silently) and clean up
 popd > /dev/null
 rm -rf "${dir}"
+
+# copy in our overrides file if it doesn't already exist
+if ! test -f /etc/systemd/system/tailscaled.service.d/override.conf; then
+  cp -rf override.conf /etc/systemd/system/tailscaled.service.d/override.conf
+fi
 
 echo "done."
 
@@ -71,12 +84,10 @@ systemd-sysext refresh > /dev/null 2>&1
 systemctl daemon-reload > /dev/null
 
 if systemctl is-enabled --quiet tailscaled && systemctl is-active --quiet tailscaled; then
-  echo "tailscaled is already enabled and active"
+  echo "tailscaled is already enabled and active; restarting it..."
+  systemctl restart tailscaled
 else
   systemctl enable tailscaled --now
 fi
 
 echo "done."
-
-
-echo "If updating, reboot or run the following to finish the process: sudo systemctl restart tailscaled"

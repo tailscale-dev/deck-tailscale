@@ -13,10 +13,9 @@ connect through the standard SSH server instead. Suggestions for how to fix this
 are welcomed.
 
 1. Clone this repo to your Deck.
-2. Copy the `tailscaled.service` file to `/etc/systemd/system/`.
-3. Run `sudo bash tailscale.sh` to install Tailscale (or update the existing
+2. Run `sudo bash tailscale.sh` to install Tailscale (or update the existing
    installation).
-4. Run `sudo tailscale up --qr --operator=deck --ssh` to have Tailscale generate
+3. Run `sudo tailscale up --qr --operator=deck --ssh` to have Tailscale generate
    a login QR code. Scan the code with your phone and authenticate with
    Tailscale to bring your Deck onto your network.
 
