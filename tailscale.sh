@@ -73,26 +73,25 @@ fi
 
 echo "done."
 
-echo "Starting services..."
+echo "Starting required services..."
 
+# systemd-sysext - manages system extensions
 if systemctl is-enabled --quiet systemd-sysext && systemctl is-active --quiet systemd-sysext; then
   echo "systemd-sysext is already enabled and active"
 else
-  systemctl enable systemd-sysext --now
+  systemctl enable systemd-sysext --now # this should be all we need in every case, but something breaks if it's already enabled/running.
 fi
+systemd-sysext refresh > /dev/null 2>&1
 
-systemd-sysext refresh
-systemctl daemon-reload
+echo "Done."
 
+# tailscaled - the tailscale daemon
 systemctl enable tailscaled
-
 if systemctl is-active --quiet tailscaled; then
   echo "Upgrade complete. Restarting tailscaled..."
 else
   echo "Install complete. Starting tailscaled..."
 fi
-
-# This needs to be the last thing we do in case the user's running this over Tailscale SSH.
-systemctl restart tailscaled
+systemctl restart tailscaled # This needs to be the last thing we do in case the user's running this over Tailscale SSH.
 
 echo "Done."
