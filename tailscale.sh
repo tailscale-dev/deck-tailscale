@@ -75,20 +75,21 @@ echo "done."
 
 echo "Starting services..."
 
-if systemctl is-enabled --quiet systemd-sysext && systemctl is-active --quiet systemd-sysext; then
-  echo "systemd-sysext is already enabled and active"
+systemctl enable systemd-sysext
+systemctl restart systemd-sysext
+
+systemd-sysext refresh
+systemctl daemon-reload
+
+systemctl enable tailscaled
+
+if systemctl is-active --quiet tailscaled; then
+  echo "Upgrade complete. Restarting tailscaled..."
 else
-  systemctl enable systemd-sysext --now
+  echo "Install complete. Starting tailscaled..."
 fi
 
-systemd-sysext refresh > /dev/null 2>&1
-systemctl daemon-reload > /dev/null
+# This needs to be the last thing we do in case the user's running this over Tailscale SSH.
+systemctl restart tailscaled
 
-if systemctl is-enabled --quiet tailscaled && systemctl is-active --quiet tailscaled; then
-  echo "tailscaled is already enabled and active; restarting it..."
-  systemctl restart tailscaled
-else
-  systemctl enable tailscaled --now
-fi
-
-echo "Tailscale installed and ready."
+echo "Done."
