@@ -56,6 +56,8 @@ cp -rf tailscale /var/lib/extensions/
 # copy the systemd files into place
 cp -rf $tar_dir/systemd/tailscaled.service /etc/systemd/system
 
+sed -i 's/--port.*//g' tailscale/usr/lib/systemd/system/tailscaled.service
+
 # copy in the defaults file if it doesn't already exist
 if ! test -f /etc/default/tailscaled; then
   cp -rf $tar_dir/systemd/tailscaled.defaults /etc/default/tailscaled
