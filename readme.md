@@ -14,6 +14,27 @@ updates.
    a login QR code. Scan the code with your phone and authenticate with
    Tailscale to bring your Deck onto your network.
 
+### Changing the root filesystem after installing Tailscale
+This method for installing Tailscale uses [`systemd` system extensions](https://man.archlinux.org/man/systemd-sysext.8.en) 
+to install files in the otherwise read-only Steam Deck filesystem. A
+side-effect is that the `/usr` and `/opt` directories
+(and directories like `/bin`, `/lib`, `/lib64`, `/mnt`, and `/sbin`, 
+that typically link to `/usr` due to [`/usr` merge](https://www.freedesktop.org/wiki/Software/systemd/TheCaseForTheUsrMerge/) 
+which SteamOS implements) are read-only while system extensions are active,
+*even after running `steamos-readonly disable`*. 
+
+If you need to modify files in these directories after installing Tailscale, 
+run the following commands:
+
+```bash
+$ systemd-sysext unmerge
+$ steamos-readonly disable
+[ make your changes to the rootfs now ]
+$ steamos-readonly enable
+$ systemd-sysext merge
+```
+
+
 ## Updating Tailscale
 
 ⚠️ This process will most likely fail if you are accessing the terminal over
