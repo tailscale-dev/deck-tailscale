@@ -2,8 +2,7 @@
 
 This process is derived from the [official guide][official-guide], but has been
 tweaked to make the process smoother and produce an installation that comes up
-automatically on boot (no need to enter desktop mode) and survives system
-updates.
+automatically on boot (no need to enter desktop mode).
 
 ## Installing Tailscale
 
@@ -14,34 +13,17 @@ updates.
    a login QR code. Scan the code with your phone and authenticate with
    Tailscale to bring your Deck onto your network.
 
-### Changing the root filesystem after installing Tailscale
-This method for installing Tailscale uses [`systemd` system extensions](https://man.archlinux.org/man/systemd-sysext.8.en) 
-to install files in the otherwise read-only Steam Deck filesystem. A
-side-effect is that the `/usr` and `/opt` directories
-(and directories like `/bin`, `/lib`, `/lib64`, `/mnt`, and `/sbin`, 
-that typically link to `/usr` due to [`/usr` merge](https://www.freedesktop.org/wiki/Software/systemd/TheCaseForTheUsrMerge/) 
-which SteamOS implements) are read-only while system extensions are active,
-*even after running `steamos-readonly disable`*. 
-
-If you need to modify files in these directories after installing Tailscale, 
-run the following commands:
-
-```bash
-$ systemd-sysext unmerge
-$ steamos-readonly disable
-[ make your changes to the rootfs now ]
-$ steamos-readonly enable
-$ systemd-sysext merge
-```
-
-
 ## Updating Tailscale
 
-⚠️ This process will most likely fail if you are accessing the terminal over
-Tailscale SSH, as it seems to be locked in a chroot jail. You should start and
-connect through the standard SSH server instead, but remember to stop it when
-you're done.
-[Suggestions for how to fix this are welcomed.](https://github.com/legowerewolf/deck-tailscale/issues/2)
+Tailscale should be able to update itself now! Try running
+`sudo tailscale update`, and if that works, `sudo tailscale set --auto-update`.
+If it doesn't, keep reading.
+
+> ⚠️ This process will most likely fail if you are accessing the terminal over
+> Tailscale SSH, as it seems to be locked in a chroot jail. You should start and
+> connect through the standard SSH server instead, but remember to stop it when
+> you're done.
+> [Suggestions for how to fix this are welcomed.](https://github.com/legowerewolf/deck-tailscale/issues/2)
 
 1. Git fetch and pull to make sure you're up to date.
 2. Run `sudo bash tailscale.sh` again.
@@ -52,6 +34,43 @@ recommended to tweak those files directly. The configuration files at
 `/etc/systemd/system/tailscaled.service.d/override.conf` are left alone, so feel
 free to edit those. If something goes wrong, copy those files somewhere else and
 re-run the install script to get back to a working state.
+
+## Changing the root filesystem after installing Tailscale
+
+This method for installing Tailscale uses
+[`systemd` system extensions](https://man.archlinux.org/man/systemd-sysext.8.en)
+to install files in the otherwise read-only Steam Deck filesystem. A side-effect
+is that the `/usr` and `/opt` directories (and directories like `/bin`, `/lib`,
+`/lib64`, `/mnt`, and `/sbin`, that typically link to `/usr` due to
+[`/usr` merge](https://www.freedesktop.org/wiki/Software/systemd/TheCaseForTheUsrMerge/)
+which SteamOS implements) are read-only while system extensions are active,
+_even after running `steamos-readonly disable`_.
+
+If you need to modify files in these directories after installing Tailscale, run
+the following commands:
+
+```bash
+$ systemd-sysext unmerge
+$ steamos-readonly disable
+[ make your changes to the rootfs now ]
+$ steamos-readonly enable
+$ systemd-sysext merge
+```
+
+## On system update
+
+Unfortunately, because SteamOS doesn't include a `SYSEXT_LEVEL`, this
+installation method breaks when the system version changes. Repair is simple:
+Re-run the second step of the installation, and everything should come back up
+as you had it.
+
+### Why this happens
+
+Extension images have to declare their compatibility using the OS ID and either
+the SYSEXT_LEVEL or VERSION_ID, which have to match what the system declares.
+
+SteamOS doesn't declare a SYSEXT_LEVEL, and the VERSION_ID increments with every
+system update, so there's no stable values to declare compatibility against.
 
 ## How it works
 
