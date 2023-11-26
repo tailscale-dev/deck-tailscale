@@ -74,7 +74,7 @@ system update, so there's no stable values to declare compatibility against.
 
 ## Common issues
 
-### Broken config file (#10)
+### Broken config file
 
 Symptom: `invalid value "" for flag -port: can't be the empty string`
 
