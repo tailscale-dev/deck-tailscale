@@ -72,6 +72,14 @@ the SYSEXT_LEVEL or VERSION_ID, which have to match what the system declares.
 SteamOS doesn't declare a SYSEXT_LEVEL, and the VERSION_ID increments with every
 system update, so there's no stable values to declare compatibility against.
 
+## Common issues
+
+### Broken config file (#10)
+
+Symptom: `invalid value "" for flag -port: can't be the empty string`
+
+Resolution: Delete `/etc/default/tailscaled` and re-run installer script.
+
 ## How it works
 
 It uses the same system extension method as the official guide, but we put the
