@@ -46,7 +46,7 @@ cp -rf $tar_dir/tailscale tailscale/usr/bin/tailscale
 cp -rf $tar_dir/tailscaled tailscale/usr/sbin/tailscaled
 
 # write a systemd extension-release file
-echo -e "ID=steamos\nVERSION_ID=${VERSION_ID}" >> tailscale/usr/lib/extension-release.d/extension-release.tailscale
+echo -e "ID=_any" >> tailscale/usr/lib/extension-release.d/extension-release.tailscale
 
 # create the system extension folder if it doesn't already exist, remove the old version of our tailscale extension, and install our new one
 mkdir -p /var/lib/extensions
