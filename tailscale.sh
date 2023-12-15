@@ -38,52 +38,29 @@ tar xzf tailscale.tgz
 tar_dir="$(echo ${tarball} | cut -d. -f1-3)"
 test -d $tar_dir
 
-# create our target directory structure
-mkdir -p tailscale/usr/{bin,sbin,lib/{systemd/system,extension-release.d}}
+# Create binaries directory in home
+mkdir -p /home/deck/.local/bin
 
-# pull things into the right place in the target dir structure
-cp -rf $tar_dir/tailscale tailscale/usr/bin/tailscale
-cp -rf $tar_dir/tailscaled tailscale/usr/sbin/tailscaled
-
-# write a systemd extension-release file
-echo -e "ID=_any" >> tailscale/usr/lib/extension-release.d/extension-release.tailscale
-
-# create the system extension folder if it doesn't already exist, remove the old version of our tailscale extension, and install our new one
-mkdir -p /var/lib/extensions
-rm -rf /var/lib/extensions/tailscale
-cp -rf tailscale /var/lib/extensions/
-
-# copy the systemd files into place
-cp -rf $tar_dir/systemd/tailscaled.service /etc/systemd/system
+# pull binaries
+cp -rf $tar_dir/tailscale /home/deck/.local/bin/tailscale
+cp -rf $tar_dir/tailscaled /home/deck/.local/bin/tailscaled
 
 # copy in the defaults file if it doesn't already exist
-if ! test -f /etc/default/tailscaled; then
-  cp -rf $tar_dir/systemd/tailscaled.defaults /etc/default/tailscaled
+if ! test -f /home/deck/.config/tailscaled.defaults; then
+  cp -rf $tar_dir/systemd/tailscaled.defaults /home/deck/.config/tailscaled.defaults
 fi
+
+# copy the systemd file into place
+cp -rf $tar_dir/systemd/tailscaled.service /etc/systemd/system
+
+sed -i 's@/etc/default/tailscaled@/home/deck/.config/tailscaled.defaults@g' /etc/systemd/system/tailscaled.service
+sed -i 's@/usr/sbin/tailscaled@/home/deck/.bin/tailscaled@g' /etc/systemd/system/tailscaled.service
 
 # return to our original directory (silently) and clean up
 popd > /dev/null
 rm -rf "${dir}"
 
-# copy in our overrides file if it doesn't already exist
-if ! test -f /etc/systemd/system/tailscaled.service.d/override.conf; then
-  mkdir -p /etc/systemd/system/tailscaled.service.d
-  cp -rf override.conf /etc/systemd/system/tailscaled.service.d/override.conf
-fi
-
-echo "done."
-
 echo "Starting required services..."
-
-# systemd-sysext - manages system extensions
-if systemctl is-enabled --quiet systemd-sysext && systemctl is-active --quiet systemd-sysext; then
-  echo "systemd-sysext is already enabled and active"
-else
-  systemctl enable systemd-sysext --now # this should be all we need in every case, but something breaks if it's already enabled/running.
-fi
-systemd-sysext refresh > /dev/null 2>&1
-
-echo "Done."
 
 # tailscaled - the tailscale daemon
 systemctl enable tailscaled
