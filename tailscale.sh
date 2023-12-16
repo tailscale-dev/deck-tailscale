@@ -45,6 +45,11 @@ mkdir -p /home/deck/.bin
 cp -rf $tar_dir/tailscale /home/deck/.bin/tailscale
 cp -rf $tar_dir/tailscaled /home/deck/.bin/tailscaled
 
+# add binaries to path via bashrc if not already there
+if [ $(cat /home/deck/.bashrc | grep -c "/home/deck/.bin") -eq 0 ]; then
+  echo "/home/deck/.bin" >> /home/deck/.bashrc
+fi
+
 # copy in the defaults file if it doesn't already exist
 if ! test -f /home/deck/.config/tailscaled.defaults; then
   cp -rf $tar_dir/systemd/tailscaled.defaults /home/deck/.config/tailscaled.defaults
