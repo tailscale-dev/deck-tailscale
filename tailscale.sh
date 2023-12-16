@@ -39,11 +39,11 @@ tar_dir="$(echo ${tarball} | cut -d. -f1-3)"
 test -d $tar_dir
 
 # Create binaries directory in home
-mkdir -p /home/deck/.local/bin
+mkdir -p /home/deck/.bin
 
 # pull binaries
-cp -rf $tar_dir/tailscale /home/deck/.local/bin/tailscale
-cp -rf $tar_dir/tailscaled /home/deck/.local/bin/tailscaled
+cp -rf $tar_dir/tailscale /home/deck/.bin/tailscale
+cp -rf $tar_dir/tailscaled /home/deck/.bin/tailscaled
 
 # copy in the defaults file if it doesn't already exist
 if ! test -f /home/deck/.config/tailscaled.defaults; then
