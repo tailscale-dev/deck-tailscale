@@ -57,6 +57,21 @@ $ steamos-readonly enable
 $ systemd-sysext merge
 ```
 
+## On system update
+
+Unfortunately, because SteamOS doesn't include a `SYSEXT_LEVEL`, this
+installation method breaks when the system version changes. Repair is simple:
+Re-run the second step of the installation, and everything should come back up
+as you had it.
+
+### Why this happens
+
+Extension images have to declare their compatibility using the OS ID and either
+the SYSEXT_LEVEL or VERSION_ID, which have to match what the system declares.
+
+SteamOS doesn't declare a SYSEXT_LEVEL, and the VERSION_ID increments with every
+system update, so there's no stable values to declare compatibility against.
+
 ## Common issues
 
 ### Broken config file
