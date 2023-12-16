@@ -58,6 +58,7 @@ fi
 # copy the systemd file into place
 cp -rf $tar_dir/systemd/tailscaled.service /etc/systemd/system
 
+# update paths in the unit file
 sed -i 's@/etc/default/tailscaled@/home/deck/.config/tailscaled.defaults@g' /etc/systemd/system/tailscaled.service
 sed -i 's@/usr/sbin/tailscaled@/home/deck/.bin/tailscaled@g' /etc/systemd/system/tailscaled.service
 
