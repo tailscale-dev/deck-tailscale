@@ -15,10 +15,6 @@ automatically on boot (no need to enter desktop mode).
 
 ## Updating Tailscale
 
-Tailscale should be able to update itself now! Try running
-`sudo tailscale update`, and if that works, `sudo tailscale set --auto-update`.
-If it doesn't, keep reading.
-
 > ⚠️ This process will most likely fail if you are accessing the terminal over
 > Tailscale SSH, as it seems to be locked in a chroot jail. You should start and
 > connect through the standard SSH server instead, but remember to stop it when
