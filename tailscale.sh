@@ -48,11 +48,6 @@ if [ $(systemd-sysext list 2>/dev/null | grep -c "/var/lib/extensions/tailscale"
   systemd-sysext merge &>/dev/null || echo "ERROR: could not merge system extensions"
 fi
 
-# Remove the overrides conf
-if test -f /etc/systemd/system/tailscaled.service.d/override.conf; then
-  rm -rf /etc/systemd/system/tailscaled.service.d/override.conf
-fi
-
 echo "done."
 
 echo -n "Installing..."
