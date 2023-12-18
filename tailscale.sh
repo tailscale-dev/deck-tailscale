@@ -78,12 +78,14 @@ if ! test -f /etc/default/tailscaled; then
   cp -rf $tar_dir/systemd/tailscaled.defaults /etc/default/tailscaled
 fi
 
-# update paths in the unit file
-sed -i 's@/usr/sbin/tailscaled@/opt/tailscale/tailscaled@g' /etc/systemd/system/tailscaled.service
-
 # return to our original directory (silently) and clean up
 popd > /dev/null
 rm -rf "${dir}"
+
+# copy in our overrides file if it doesn't already exist
+if ! test -f /etc/systemd/system/tailscaled.service.d/override.conf; then
+  mkdir -p /etc/systemd/system/tailscaled.service.d
+  cp -rf override.conf /etc/systemd/system/tailscaled.service.d/override.conf
 
 echo "done."
 
