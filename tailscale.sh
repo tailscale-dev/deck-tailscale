@@ -71,7 +71,7 @@ cp -rf $tar_dir/tailscaled /opt/tailscale/tailscaled
 
 # add binaries to path via profile.d
 if ! test -f /etc/profile.d/tailscale.sh; then
-  echo 'PATH="$PATH:/home/deck/.bin"' >> /etc/profile.d/tailscale.sh
+  echo 'PATH="$PATH:/opt/tailscale"' >> /etc/profile.d/tailscale.sh
 fi
 
 # copy the systemd file into place
