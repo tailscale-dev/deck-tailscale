@@ -31,6 +31,28 @@ curl -s "https://pkgs.tailscale.com/stable/${tarball}" -o tailscale.tgz
 
 echo "done."
 
+echo -n "Uninstalling Legacy Installation..."
+
+# Stop and disable the systemd service
+if systemctl is-active --quiet tailscaled; then
+  systemctl stop tailscaled
+fi
+if systemctl is-enabled --quiet tailscaled; then
+  systemctl disable tailscaled
+fi
+
+# Remove the systemd system extension
+if [ $(systemd-sysext list | grep -c "/var/lib/extensions/tailscale") -ne 0 ]; then
+  systemd-sysext unmerge > /dev/null
+  rm -rf /var/lib/extensions/tailscale
+  systemd-sysext merge > /dev/null
+fi
+
+# Remove the overrides conf
+if test -f /etc/systemd/system/tailscaled.service.d/override.conf; then
+  cp -rf $tar_dir/systemd/tailscaled.defaults /home/deck/.config/tailscaled.defaults
+fi
+
 echo -n "Installing..."
 
 # extract the tailscale binaries
