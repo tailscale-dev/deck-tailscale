@@ -42,7 +42,7 @@ if systemctl is-enabled --quiet tailscaled; then
 fi
 
 # Remove the systemd system extension
-if [ $(systemd-sysext list | grep -c "/var/lib/extensions/tailscale") -ne 0 ]; then
+if [ $(systemd-sysext list 2>/dev/null | grep -c "/var/lib/extensions/tailscale") -ne 0 ]; then
   systemd-sysext unmerge &>/dev/null || echo "ERROR: could not unmerge system extensions"
   rm -rf /var/lib/extensions/tailscale
   systemd-sysext merge &>/dev/null || echo "ERROR: could not merge system extensions"
@@ -96,12 +96,16 @@ echo "Starting required services..."
 # tailscaled - the tailscale daemon
 # Note: enable and start/restart must be run because the legacy installation stops and disables
 # any existing installations.
-systemctl enable tailscaled
+systemctl enable tailscaled &>/dev/null || echo "ERROR: Could not enable tailscaled service"
 if systemctl is-active --quiet tailscaled; then
-  echo "Upgrade complete. Restarting tailscaled..."
+  echo "Upgrade complete."
+  echo -n "Restarting tailscaled..."
 else
-  echo "Install complete. Starting tailscaled..."
+  echo "Install complete."
+  echo -n "Starting tailscaled..."
 fi
-systemctl restart tailscaled # This needs to be the last thing we do in case the user's running this over Tailscale SSH.
 
-echo "Done."
+# This needs to be the last thing we do in case the user's running this over Tailscale SSH.
+systemctl restart tailscaled &>/dev/null || echo "ERROR: Could not start tailscaled service" 
+
+echo "done."
