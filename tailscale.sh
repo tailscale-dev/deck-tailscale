@@ -72,6 +72,7 @@ cp -rf $tar_dir/tailscaled /opt/tailscale/tailscaled
 # add binaries to path via profile.d
 if ! test -f /etc/profile.d/tailscale.sh; then
   echo 'PATH="$PATH:/opt/tailscale"' >> /etc/profile.d/tailscale.sh
+  source /etc/profile.d/tailscale.sh
 fi
 
 # copy the systemd file into place
@@ -109,3 +110,11 @@ fi
 systemctl restart tailscaled &>/dev/null || echo "ERROR: Could not start tailscaled service" 
 
 echo "done."
+
+if ! command -v tailscale &> /dev/null; then
+  echo "Tailscale is installed and running but the binaries are not in your path yet."
+  echo "Restart your session or run the following command to add them:"
+  echo "" && echo "source /etc/tailscale" && echo ""
+fi
+
+echo "Installation Complete."
