@@ -35,17 +35,17 @@ echo -n "Removing Legacy Installations..."
 
 # Stop and disable the systemd service
 if systemctl is-active --quiet tailscaled; then
-  systemctl stop tailscaled
+  systemctl stop tailscaled &>/dev/null || echo "ERROR: could not stop tailscaled"
 fi
 if systemctl is-enabled --quiet tailscaled; then
-  systemctl disable tailscaled
+  systemctl disable tailscaled &>/dev/null || echo "ERROR: could not disable tailscaled"
 fi
 
 # Remove the systemd system extension
 if [ $(systemd-sysext list | grep -c "/var/lib/extensions/tailscale") -ne 0 ]; then
-  systemd-sysext unmerge > /dev/null
+  systemd-sysext unmerge &>/dev/null || echo "ERROR: could not unmerge system extensions"
   rm -rf /var/lib/extensions/tailscale
-  systemd-sysext merge > /dev/null
+  systemd-sysext merge &>/dev/null || echo "ERROR: could not merge system extensions"
 fi
 
 # Remove the overrides conf
@@ -69,7 +69,6 @@ cp -rf $tar_dir/tailscaled /opt/tailscale/tailscaled
 
 # add binaries to path via profile.d
 if ! test -f /etc/profile.d/tailscale.sh; then
-  mkdir -p /etc/profile.d/tailscale.sh
   echo 'PATH="$PATH:/home/deck/.bin"' >> /etc/profile.d/tailscale.sh
 fi
 
