@@ -91,7 +91,7 @@ rm -rf "${dir}"
 
 echo "done."
 
-echo "Starting required services..."
+echo -n "Starting required services..."
 
 # tailscaled - the tailscale daemon
 # Note: enable and start/restart must be run because the legacy installation stops and disables
