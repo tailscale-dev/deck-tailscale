@@ -53,6 +53,8 @@ if test -f /etc/systemd/system/tailscaled.service.d/override.conf; then
   rm -rf /etc/systemd/system/tailscaled.service.d/override.conf
 fi
 
+echo "done."
+
 echo -n "Installing..."
 
 # extract the tailscale binaries
@@ -86,6 +88,8 @@ sed -i 's@/usr/sbin/tailscaled@/opt/tailscale/tailscaled@g' /etc/systemd/system/
 # return to our original directory (silently) and clean up
 popd > /dev/null
 rm -rf "${dir}"
+
+echo "done."
 
 echo "Starting required services..."
 
