@@ -112,9 +112,12 @@ systemctl restart tailscaled &>/dev/null || echo "ERROR: Could not start tailsca
 echo "done."
 
 if ! command -v tailscale &> /dev/null; then
+  echo 
   echo "Tailscale is installed and running but the binaries are not in your path yet."
   echo "Restart your session or run the following command to add them:"
-  echo "" && echo "source /etc/tailscale" && echo ""
+  echo 
+  echo "source /etc/tailscale"
+  echo
 fi
 
 echo "Installation Complete."
