@@ -31,7 +31,7 @@ curl -s "https://pkgs.tailscale.com/stable/${tarball}" -o tailscale.tgz
 
 echo "done."
 
-echo -n "Uninstalling Legacy Installation..."
+echo -n "Removing Legacy Installations..."
 
 # Stop and disable the systemd service
 if systemctl is-active --quiet tailscaled; then
@@ -50,7 +50,7 @@ fi
 
 # Remove the overrides conf
 if test -f /etc/systemd/system/tailscaled.service.d/override.conf; then
-  cp -rf $tar_dir/systemd/tailscaled.defaults /home/deck/.config/tailscaled.defaults
+  rm -rf /etc/systemd/system/tailscaled.service.d/override.conf
 fi
 
 echo -n "Installing..."
@@ -61,28 +61,28 @@ tar_dir="$(echo ${tarball} | cut -d. -f1-3)"
 test -d $tar_dir
 
 # Create binaries directory in home
-mkdir -p /home/deck/.bin
+mkdir -p /opt/tailscale
 
 # pull binaries
-cp -rf $tar_dir/tailscale /home/deck/.bin/tailscale
-cp -rf $tar_dir/tailscaled /home/deck/.bin/tailscaled
+cp -rf $tar_dir/tailscale /opt/tailscale/tailscale
+cp -rf $tar_dir/tailscaled /opt/tailscale/tailscaled
 
-# add binaries to path via bashrc if not already there
-if [ $(cat /home/deck/.bashrc | grep -c 'export PATH="/home/deck/.bin:$PATH"') -eq 0 ]; then
-  echo 'export PATH="/home/deck/.bin:$PATH"' >> /home/deck/.bashrc
-fi
-
-# copy in the defaults file if it doesn't already exist
-if ! test -f /home/deck/.config/tailscaled.defaults; then
-  cp -rf $tar_dir/systemd/tailscaled.defaults /home/deck/.config/tailscaled.defaults
+# add binaries to path via profile.d
+if ! test -f /etc/profile.d/tailscale.sh; then
+  mkdir -p /etc/profile.d/tailscale.sh
+  echo 'PATH="$PATH:/home/deck/.bin"' >> /etc/profile.d/tailscale.sh
 fi
 
 # copy the systemd file into place
-cp -rf $tar_dir/systemd/tailscaled.service /etc/systemd/system
+cp -rf $tar_dir/systemd/tailscaled.service /etc/systemd/system/tailscaled.service
+
+# copy in the defaults file if it doesn't already exist
+if ! test -f /etc/default/tailscaled; then
+  cp -rf $tar_dir/systemd/tailscaled.defaults /etc/default/tailscaled
+fi
 
 # update paths in the unit file
-sed -i 's@/etc/default/tailscaled@/home/deck/.config/tailscaled.defaults@g' /etc/systemd/system/tailscaled.service
-sed -i 's@/usr/sbin/tailscaled@/home/deck/.bin/tailscaled@g' /etc/systemd/system/tailscaled.service
+sed -i 's@/usr/sbin/tailscaled@/opt/tailscale/tailscaled@g' /etc/systemd/system/tailscaled.service
 
 # return to our original directory (silently) and clean up
 popd > /dev/null
@@ -91,6 +91,8 @@ rm -rf "${dir}"
 echo "Starting required services..."
 
 # tailscaled - the tailscale daemon
+# Note: enable and start/restart must be run because the legacy installation stops and disables
+# any existing installations.
 systemctl enable tailscaled
 if systemctl is-active --quiet tailscaled; then
   echo "Upgrade complete. Restarting tailscaled..."
