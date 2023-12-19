@@ -85,6 +85,7 @@ rm -rf "${dir}"
 # if an override file already exists, back up and remove
 if test -f /etc/systemd/system/tailscaled.service.d/override.conf; then
   echo
+  echo
   echo "Warning: An existing Tailscaled systemd override file was detected. It must be replaced."
   echo "A backup of the existing file is being placed at /etc/systemd/system/tailscaled.service.d/override.conf.bak"
   echo
