@@ -9,7 +9,8 @@ automatically on boot (no need to enter desktop mode).
 1. Clone this repo to your Deck.
 2. Run `sudo bash tailscale.sh` to install Tailscale (or update the existing
    installation).
-3. Run `sudo tailscale up --qr --operator=deck --ssh` to have Tailscale generate
+3. Run `source /etc/profile.d/tailscale.sh` to put the binaries in your path
+4. Run `sudo tailscale up --qr --operator=deck --ssh` to have Tailscale generate
    a login QR code. Scan the code with your phone and authenticate with
    Tailscale to bring your Deck onto your network.
 
@@ -29,48 +30,9 @@ If it doesn't, keep reading.
 2. Run `sudo bash tailscale.sh` again.
 
 This process overwrites the existing binaries and service file, so it's not
-recommended to tweak those files directly. The configuration files at
-`/etc/default/tailscaled` and
-`/etc/systemd/system/tailscaled.service.d/override.conf` are left alone, so feel
-free to edit those. If something goes wrong, copy those files somewhere else and
-re-run the install script to get back to a working state.
-
-## Changing the root filesystem after installing Tailscale
-
-This method for installing Tailscale uses
-[`systemd` system extensions](https://man.archlinux.org/man/systemd-sysext.8.en)
-to install files in the otherwise read-only Steam Deck filesystem. A side-effect
-is that the `/usr` and `/opt` directories (and directories like `/bin`, `/lib`,
-`/lib64`, `/mnt`, and `/sbin`, that typically link to `/usr` due to
-[`/usr` merge](https://www.freedesktop.org/wiki/Software/systemd/TheCaseForTheUsrMerge/)
-which SteamOS implements) are read-only while system extensions are active,
-_even after running `steamos-readonly disable`_.
-
-If you need to modify files in these directories after installing Tailscale, run
-the following commands:
-
-```bash
-$ systemd-sysext unmerge
-$ steamos-readonly disable
-[ make your changes to the rootfs now ]
-$ steamos-readonly enable
-$ systemd-sysext merge
-```
-
-## On system update
-
-Unfortunately, because SteamOS doesn't include a `SYSEXT_LEVEL`, this
-installation method breaks when the system version changes. Repair is simple:
-Re-run the second step of the installation, and everything should come back up
-as you had it.
-
-### Why this happens
-
-Extension images have to declare their compatibility using the OS ID and either
-the SYSEXT_LEVEL or VERSION_ID, which have to match what the system declares.
-
-SteamOS doesn't declare a SYSEXT_LEVEL, and the VERSION_ID increments with every
-system update, so there's no stable values to declare compatibility against.
+recommended to tweak those files directly. The configuration file at
+`/etc/default/tailscaled` is left alone. The configuration file at
+`/etc/systemd/system/tailscaled.service.d/override.conf` is reset every time this script is run to ensure the path to the binary is correct, but the preexisting file will be backed up in that directory as `override.conf.bak`. If something goes wrong, copy those files somewhere else and re-run the install script to get back to a working state.
 
 ## Common issues
 
@@ -82,10 +44,6 @@ Resolution: Delete `/etc/default/tailscaled` and re-run installer script.
 
 ## How it works
 
-It uses the same system extension method as the official guide, but we put the
-`tailscaled.service` file directly in `/etc/systemd/system/` because it's
-actually safe to put things there. Changes in `/etc/` are preserved in
-`/var/lib/overlays/etc/upper/` via an overlayfs, meaning that they survive
-updates.
+The Tailscale binaries `tailscale` and `tailscaled` are installed in `/opt/tailscale/`. The Tailscale systemd unit file is installed at `/etc/systemd/system/tailscale.service`. The override file to reconfigure the services `Exec` commands is installed at `/etc/systemd/system/tailscaled.service.d/override.conf`. The defaults file for the variables `PORT` and `FLAGS` is installed at `/etc/default/tailscaled`
 
-[official-guide]: https://tailscale.com/blog/steam-deck/
+The service is then started and enabled via `systemctl`.
