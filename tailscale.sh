@@ -89,13 +89,13 @@ if test -f /etc/systemd/system/tailscaled.service.d/override.conf; then
   echo "Warning: An existing Tailscaled systemd override file was detected. It must be replaced."
   echo "A backup of the existing file is being placed at /etc/systemd/system/tailscaled.service.d/override.conf.bak"
   echo
-  cp -rf /etc/systemd/system/tailscaled.service.d/override.conf /etc/systemd/system/tailscaled.service.d/override.conf.bak
+  cp -f /etc/systemd/system/tailscaled.service.d/override.conf /etc/systemd/system/tailscaled.service.d/override.conf.bak
   rm /etc/systemd/system/tailscaled.service.d/override.conf
 fi
 
 # copy our override file in
 mkdir -p /etc/systemd/system/tailscaled.service.d
-cp -rf override.conf /etc/systemd/system/tailscaled.service.d/override.conf
+cp -f override.conf /etc/systemd/system/tailscaled.service.d/override.conf
 
 echo "done."
 
