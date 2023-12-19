@@ -86,6 +86,7 @@ rm -rf "${dir}"
 if ! test -f /etc/systemd/system/tailscaled.service.d/override.conf; then
   mkdir -p /etc/systemd/system/tailscaled.service.d
   cp -rf override.conf /etc/systemd/system/tailscaled.service.d/override.conf
+fi
 
 echo "done."
 
