@@ -97,6 +97,9 @@ fi
 mkdir -p /etc/systemd/system/tailscaled.service.d
 cp -f override.conf /etc/systemd/system/tailscaled.service.d/override.conf
 
+# capture the above override file in systemd
+systemctl daemon-reload
+
 echo "done."
 
 echo -n "Starting required services..."
