@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# make system configuration vars available
-source /etc/os-release
-
 # set invocation settings for this script:
 # -e: Exit immediately if a command exits with a non-zero status.
 # -u: Treat unset variables as an error when substituting.
