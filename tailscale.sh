@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# make system configuration vars available
-source /etc/os-release
-
 # set invocation settings for this script:
 # -e: Exit immediately if a command exits with a non-zero status.
 # -u: Treat unset variables as an error when substituting.
@@ -31,6 +28,25 @@ curl -s "https://pkgs.tailscale.com/stable/${tarball}" -o tailscale.tgz
 
 echo "done."
 
+echo -n "Removing Legacy Installations..."
+
+# Stop and disable the systemd service
+if systemctl is-active --quiet tailscaled; then
+  systemctl stop tailscaled &>/dev/null || echo "ERROR: could not stop tailscaled"
+fi
+if systemctl is-enabled --quiet tailscaled; then
+  systemctl disable tailscaled &>/dev/null || echo "ERROR: could not disable tailscaled"
+fi
+
+# Remove the systemd system extension
+if [ $(systemd-sysext list 2>/dev/null | grep -c "/var/lib/extensions/tailscale") -ne 0 ]; then
+  systemd-sysext unmerge &>/dev/null || echo "ERROR: could not unmerge system extensions"
+  rm -rf /var/lib/extensions/tailscale
+  systemd-sysext merge &>/dev/null || echo "ERROR: could not merge system extensions"
+fi
+
+echo "done."
+
 echo -n "Installing..."
 
 # extract the tailscale binaries
@@ -38,23 +54,21 @@ tar xzf tailscale.tgz
 tar_dir="$(echo ${tarball} | cut -d. -f1-3)"
 test -d $tar_dir
 
-# create our target directory structure
-mkdir -p tailscale/usr/{bin,sbin,lib/{systemd/system,extension-release.d}}
+# Create binaries directory in home
+mkdir -p /opt/tailscale
 
-# pull things into the right place in the target dir structure
-cp -rf $tar_dir/tailscale tailscale/usr/bin/tailscale
-cp -rf $tar_dir/tailscaled tailscale/usr/sbin/tailscaled
+# pull binaries
+cp -rf $tar_dir/tailscale /opt/tailscale/tailscale
+cp -rf $tar_dir/tailscaled /opt/tailscale/tailscaled
 
-# write a systemd extension-release file
-echo -e "ID=steamos\nVERSION_ID=${VERSION_ID}" >> tailscale/usr/lib/extension-release.d/extension-release.tailscale
+# add binaries to path via profile.d
+if ! test -f /etc/profile.d/tailscale.sh; then
+  echo 'PATH="$PATH:/opt/tailscale"' >> /etc/profile.d/tailscale.sh
+  source /etc/profile.d/tailscale.sh
+fi
 
-# create the system extension folder if it doesn't already exist, remove the old version of our tailscale extension, and install our new one
-mkdir -p /var/lib/extensions
-rm -rf /var/lib/extensions/tailscale
-cp -rf tailscale /var/lib/extensions/
-
-# copy the systemd files into place
-cp -rf $tar_dir/systemd/tailscaled.service /etc/systemd/system
+# copy the systemd file into place
+cp -rf $tar_dir/systemd/tailscaled.service /etc/systemd/system/tailscaled.service
 
 # copy in the defaults file if it doesn't already exist
 if ! test -f /etc/default/tailscaled; then
@@ -65,33 +79,52 @@ fi
 popd > /dev/null
 rm -rf "${dir}"
 
-# copy in our overrides file if it doesn't already exist
-if ! test -f /etc/systemd/system/tailscaled.service.d/override.conf; then
-  mkdir -p /etc/systemd/system/tailscaled.service.d
-  cp -rf override.conf /etc/systemd/system/tailscaled.service.d/override.conf
+# if an override file already exists, back up and remove
+if test -f /etc/systemd/system/tailscaled.service.d/override.conf; then
+  echo
+  echo
+  echo "Warning: An existing Tailscaled systemd override file was detected. It must be replaced."
+  echo "A backup of the existing file is being placed at /etc/systemd/system/tailscaled.service.d/override.conf.bak"
+  echo
+  cp -f /etc/systemd/system/tailscaled.service.d/override.conf /etc/systemd/system/tailscaled.service.d/override.conf.bak
+  rm /etc/systemd/system/tailscaled.service.d/override.conf
 fi
+
+# copy our override file in
+mkdir -p /etc/systemd/system/tailscaled.service.d
+cp -f override.conf /etc/systemd/system/tailscaled.service.d/override.conf
+
+# capture the above override file in systemd
+systemctl daemon-reload
 
 echo "done."
 
-echo "Starting required services..."
-
-# systemd-sysext - manages system extensions
-if systemctl is-enabled --quiet systemd-sysext && systemctl is-active --quiet systemd-sysext; then
-  echo "systemd-sysext is already enabled and active"
-else
-  systemctl enable systemd-sysext --now # this should be all we need in every case, but something breaks if it's already enabled/running.
-fi
-systemd-sysext refresh > /dev/null 2>&1
-
-echo "Done."
+echo -n "Starting required services..."
 
 # tailscaled - the tailscale daemon
-systemctl enable tailscaled
+# Note: enable and start/restart must be run because the legacy installation stops and disables
+# any existing installations.
+systemctl enable tailscaled &>/dev/null || echo "ERROR: Could not enable tailscaled service"
 if systemctl is-active --quiet tailscaled; then
-  echo "Upgrade complete. Restarting tailscaled..."
+  echo "Upgrade complete."
+  echo -n "Restarting tailscaled..."
 else
-  echo "Install complete. Starting tailscaled..."
+  echo "Install complete."
+  echo -n "Starting tailscaled..."
 fi
-systemctl restart tailscaled # This needs to be the last thing we do in case the user's running this over Tailscale SSH.
 
-echo "Done."
+# This needs to be the last thing we do in case the user's running this over Tailscale SSH.
+systemctl restart tailscaled &>/dev/null || echo "ERROR: Could not start tailscaled service" 
+
+echo "done."
+
+if ! command -v tailscale &> /dev/null; then
+  echo 
+  echo "Tailscale is installed and running but the binaries are not in your path yet."
+  echo "Restart your session or run the following command to add them:"
+  echo 
+  echo "source /etc/profile.d/tailscale.sh"
+  echo
+fi
+
+echo "Installation Complete."
