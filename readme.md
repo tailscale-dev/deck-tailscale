@@ -1,6 +1,6 @@
 # Tailscale on the Steam Deck
 
-This process is derived from the [official guide][official-guide], but has been
+This process is derived from the [official guide](https://tailscale.com/blog/steam-deck), but has been
 tweaked to make the process smoother and produce an installation that comes up
 automatically on boot (no need to enter desktop mode).
 
