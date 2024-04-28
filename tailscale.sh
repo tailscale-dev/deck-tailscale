@@ -21,12 +21,10 @@ version="$(echo ${tarball} | cut -d_ -f2)"
 
 echo "got ${version}."
 
-echo -n "Downloading..."
+echo "Downloading:"
 
 # download the Tailscale package itself
-curl -s "https://pkgs.tailscale.com/stable/${tarball}" -o tailscale.tgz
-
-echo "done."
+wget -q --show-progress -O tailscale.tgz "https://pkgs.tailscale.com/stable/${tarball}"
 
 echo -n "Removing Legacy Installations..."
 
@@ -114,15 +112,15 @@ else
 fi
 
 # This needs to be the last thing we do in case the user's running this over Tailscale SSH.
-systemctl restart tailscaled &>/dev/null || echo "ERROR: Could not start tailscaled service" 
+systemctl restart tailscaled &>/dev/null || echo "ERROR: Could not start tailscaled service"
 
 echo "done."
 
 if ! command -v tailscale &> /dev/null; then
-  echo 
+  echo
   echo "Tailscale is installed and running but the binaries are not in your path yet."
   echo "Restart your session or run the following command to add them:"
-  echo 
+  echo
   echo "source /etc/profile.d/tailscale.sh"
   echo
 fi
