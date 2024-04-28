@@ -24,7 +24,7 @@ echo "got ${version}."
 echo -n "Downloading..."
 
 # download the Tailscale package itself
-curl -s "https://pkgs.tailscale.com/stable/${tarball}" -o tailscale.tgz
+wget -O tailscale.tgz "https://pkgs.tailscale.com/stable/${tarball}"
 
 echo "done."
 
