@@ -7,7 +7,7 @@ automatically on boot (no need to enter desktop mode).
 ## Installing Tailscale
 
 1. Clone this repo to your Deck.
-2. Run `sudo bash tailscale.sh` to install Tailscale (or update the existing
+2. Run `sudo ./tailscale.sh` to install Tailscale (or update the existing
    installation).
 3. Run `source /etc/profile.d/tailscale.sh` to put the binaries in your path
 4. Run `sudo tailscale up --qr --operator=deck --ssh` to have Tailscale generate
@@ -27,7 +27,7 @@ If it doesn't, keep reading.
 > [Suggestions for how to fix this are welcomed.](https://github.com/legowerewolf/deck-tailscale/issues/2)
 
 1. Git fetch and pull to make sure you're up to date.
-2. Run `sudo bash tailscale.sh` again.
+2. Run `sudo ./tailscale.sh` again.
 
 This process overwrites the existing binaries and service file, so it's not
 recommended to tweak those files directly. The configuration file at

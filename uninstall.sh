@@ -1,3 +1,4 @@
+#!/bin/sh
 systemctl stop tailscaled
 systemctl disable tailscaled
 rm /etc/systemd/system/tailscaled.service
