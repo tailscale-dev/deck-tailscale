@@ -11,6 +11,7 @@ pushd . > /dev/null
 
 # make a temporary directory, save the name, and move into it
 dir="$(mktemp -d)"
+trap "rm -rf -- ${dir@Q}" EXIT
 cd "${dir}"
 
 echo -n "Getting version..."
@@ -73,9 +74,8 @@ if ! test -f /etc/default/tailscaled; then
   cp -rf $tar_dir/systemd/tailscaled.defaults /etc/default/tailscaled
 fi
 
-# return to our original directory (silently) and clean up
+# return to our original directory (silently)
 popd > /dev/null
-rm -rf "${dir}"
 
 # if an override file already exists, back up and remove
 if test -f /etc/systemd/system/tailscaled.service.d/override.conf; then
