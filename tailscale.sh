@@ -6,6 +6,9 @@
 # -o pipefail: the return value of a pipeline is the status of the last command to exit with a non-zero status, or zero if no command exited with a non-zero status
 set -eu -o pipefail
 
+# save the script's directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # save the current directory silently
 pushd . > /dev/null
 
@@ -90,7 +93,7 @@ fi
 
 # copy our override file in
 mkdir -p /etc/systemd/system/tailscaled.service.d
-cp -f override.conf /etc/systemd/system/tailscaled.service.d/override.conf
+cp -f "${SCRIPT_DIR}/override.conf" /etc/systemd/system/tailscaled.service.d/override.conf
 
 # capture the above override file in systemd
 systemctl daemon-reload
