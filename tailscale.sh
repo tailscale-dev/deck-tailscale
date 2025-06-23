@@ -63,18 +63,26 @@ cp -rf $tar_dir/tailscaled /opt/tailscale/tailscaled
 chmod +x /opt/tailscale/tailscale
 chmod +x /opt/tailscale/tailscaled
 
-# Create symbolic links in /usr/local/bin (which is typically in PATH)
-# Ensure the directory exists first
-mkdir -p /usr/local/bin
+# Create symbolic links for PATH access
+# On Steam Deck, /usr/local/bin is read-only, so use ~/.local/bin instead
+if [ -f /etc/os-release ] && grep -q "steamdeck" /etc/os-release; then
+  # Steam Deck detected - use ~/.local/bin
+  SYMLINK_DIR="/home/deck/.local/bin"
+  mkdir -p "$SYMLINK_DIR"
+else
+  # Other systems - use /usr/local/bin
+  SYMLINK_DIR="/usr/local/bin"
+  mkdir -p "$SYMLINK_DIR"
+fi
 
 # Remove existing symlinks first if they exist
-rm -f /usr/local/bin/tailscale /usr/local/bin/tailscaled
+rm -f "$SYMLINK_DIR/tailscale" "$SYMLINK_DIR/tailscaled"
 
 # Create new symbolic links
-ln -s /opt/tailscale/tailscale /usr/local/bin/tailscale
-ln -s /opt/tailscale/tailscaled /usr/local/bin/tailscaled
+ln -s /opt/tailscale/tailscale "$SYMLINK_DIR/tailscale"
+ln -s /opt/tailscale/tailscaled "$SYMLINK_DIR/tailscaled"
 
-# Also add to profile.d as fallback for environments where /usr/local/bin isn't in PATH
+# Also add to profile.d as fallback for environments where symlink directory isn't in PATH
 if ! test -f /etc/profile.d/tailscale.sh; then
   echo 'PATH="$PATH:/opt/tailscale"' >> /etc/profile.d/tailscale.sh
   source /etc/profile.d/tailscale.sh
