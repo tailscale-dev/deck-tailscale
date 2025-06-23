@@ -75,6 +75,24 @@ if [ -f /etc/os-release ] && (grep -q "ID=steamos" /etc/os-release || grep -q "V
     echo 'PATH="$PATH:/home/deck/.local/bin:/opt/tailscale"' >> /etc/profile.d/tailscale.sh
     source /etc/profile.d/tailscale.sh
   fi
+  
+  # Also add to user's shell profile for Konsole compatibility
+  # Add to .bashrc if it exists and doesn't already contain the PATH
+  if [ -f /home/deck/.bashrc ] && ! grep -q "/home/deck/.local/bin" /home/deck/.bashrc; then
+    echo 'export PATH="$PATH:/home/deck/.local/bin:/opt/tailscale"' >> /home/deck/.bashrc
+  fi
+  
+  # Add to .bash_profile if it exists and doesn't already contain the PATH
+  if [ -f /home/deck/.bash_profile ] && ! grep -q "/home/deck/.local/bin" /home/deck/.bash_profile; then
+    echo 'export PATH="$PATH:/home/deck/.local/bin:/opt/tailscale"' >> /home/deck/.bash_profile
+  fi
+  
+  # Create .bash_profile if it doesn't exist (common on Steam Deck)
+  if [ ! -f /home/deck/.bash_profile ]; then
+    echo 'export PATH="$PATH:/home/deck/.local/bin:/opt/tailscale"' > /home/deck/.bash_profile
+    chown deck:deck /home/deck/.bash_profile
+  fi
+  
 else
   # Other systems - use /usr/local/bin
   SYMLINK_DIR="/usr/local/bin"

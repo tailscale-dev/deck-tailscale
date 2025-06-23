@@ -7,6 +7,11 @@ rm -f /etc/profile.d/tailscale.sh
 # Remove symlinks from both possible locations (Steam Deck and other systems)
 rm -f /usr/local/bin/tailscale /usr/local/bin/tailscaled
 rm -f /home/deck/.local/bin/tailscale /home/deck/.local/bin/tailscaled
+# Remove PATH entries from user shell profiles
+sed -i '/\/home\/deck\/.local\/bin.*tailscale/d' /home/deck/.bashrc 2>/dev/null || true
+sed -i '/\/home\/deck\/.local\/bin.*tailscale/d' /home/deck/.bash_profile 2>/dev/null || true
+sed -i '/\/opt\/tailscale/d' /home/deck/.bashrc 2>/dev/null || true
+sed -i '/\/opt\/tailscale/d' /home/deck/.bash_profile 2>/dev/null || true
 # Remove specific Tailscale binaries
 rm -f /opt/tailscale/tailscale
 rm -f /opt/tailscale/tailscaled
