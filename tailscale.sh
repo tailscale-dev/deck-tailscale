@@ -59,7 +59,22 @@ mkdir -p /opt/tailscale
 cp -rf $tar_dir/tailscale /opt/tailscale/tailscale
 cp -rf $tar_dir/tailscaled /opt/tailscale/tailscaled
 
-# add binaries to path via profile.d
+# Make binaries executable
+chmod +x /opt/tailscale/tailscale
+chmod +x /opt/tailscale/tailscaled
+
+# Create symbolic links in /usr/local/bin (which is typically in PATH)
+# Ensure the directory exists first
+mkdir -p /usr/local/bin
+
+# Remove existing symlinks first if they exist
+rm -f /usr/local/bin/tailscale /usr/local/bin/tailscaled
+
+# Create new symbolic links
+ln -s /opt/tailscale/tailscale /usr/local/bin/tailscale
+ln -s /opt/tailscale/tailscaled /usr/local/bin/tailscaled
+
+# Also add to profile.d as fallback for environments where /usr/local/bin isn't in PATH
 if ! test -f /etc/profile.d/tailscale.sh; then
   echo 'PATH="$PATH:/opt/tailscale"' >> /etc/profile.d/tailscale.sh
   source /etc/profile.d/tailscale.sh
