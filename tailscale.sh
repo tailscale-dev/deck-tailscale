@@ -73,6 +73,12 @@ if ! test -f /etc/default/tailscaled; then
   cp -rf $tar_dir/systemd/tailscaled.defaults /etc/default/tailscaled
 fi
 
+# add atomic-update.conf.d configuration
+echo <<EOF > /etc/atomic-update.conf.d/tailscale.conf
+/etc/default/tailscaled
+/etc/profile.d/tailscale.sh
+EOF
+
 # return to our original directory (silently) and clean up
 popd > /dev/null
 rm -rf "${dir}"
