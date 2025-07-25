@@ -74,7 +74,7 @@ if ! test -f /etc/default/tailscaled; then
 fi
 
 # add atomic-update.conf.d configuration
-echo <<EOF > /etc/atomic-update.conf.d/tailscale.conf
+cat <<EOF > /etc/atomic-update.conf.d/tailscale.conf
 /etc/default/tailscaled
 /etc/profile.d/tailscale.sh
 EOF
