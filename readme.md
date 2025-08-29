@@ -6,11 +6,14 @@ automatically on boot (no need to enter desktop mode).
 
 ## Installing Tailscale
 
-1. Clone this repo to your Deck.
-2. Run `sudo bash tailscale.sh` to install Tailscale (or update the existing
+1. Clone this repo to your Deck, switch to root and enter the directory:
+   1. `git clone htps://github.com/tailscale-dev/deck-tailscale.git ~/deck-tailscale`
+   2. `sudo -i`
+   3. `cd ~deck/deck-tailscale` 
+2. Run `bash tailscale.sh` to install Tailscale (or update the existing
    installation).
 3. Run `source /etc/profile.d/tailscale.sh` to put the binaries in your path
-4. Run `sudo tailscale up --qr --operator=deck --ssh` to have Tailscale generate
+4. Run `tailscale up --qr --operator=deck --ssh` to have Tailscale generate
    a login QR code. Scan the code with your phone and authenticate with
    Tailscale to bring your Deck onto your network.
 
@@ -24,9 +27,15 @@ If it doesn't, keep reading.
 > Tailscale SSH, as it seems to be locked in a chroot jail. You should start and
 > connect through the standard SSH server instead, but remember to stop it when
 > you're done.
-> [Suggestions for how to fix this are welcomed.](https://github.com/legowerewolf/deck-tailscale/issues/2)
+> [Suggestions for how to fix this are welcomed.](https://github.com/tailscale-dev/deck-tailscale/issues/2)
 
-1. Git fetch and pull to make sure you're up to date.
+## Updating the install script
+
+To benefit from improvements to the install script, consider rerunning it from time to time.
+
+1. Git fetch and pull to make sure you're up to date:
+   1. `cd ~/deck-tailscale`
+   2. `git pull`
 2. Run `sudo bash tailscale.sh` again.
 
 This process overwrites the existing binaries and service file, so it's not
