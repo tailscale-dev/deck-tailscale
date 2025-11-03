@@ -9,7 +9,7 @@ automatically on boot (no need to enter desktop mode).
 1. Clone this repo to your Deck, switch to root and enter the directory:
    1. `git clone https://github.com/tailscale-dev/deck-tailscale.git ~/deck-tailscale`
    2. `sudo -i`
-   3. `cd ~deck/deck-tailscale` 
+   3. `cd ~/deck-tailscale` 
 2. Run `bash tailscale.sh` to install Tailscale (or update the existing
    installation).
 3. Run `source /etc/profile.d/tailscale.sh` to put the binaries in your path
@@ -56,4 +56,5 @@ Resolution: Delete `/etc/default/tailscaled` and re-run installer script.
 The Tailscale binaries `tailscale` and `tailscaled` are installed in `/opt/tailscale/`. The Tailscale systemd unit file is installed at `/etc/systemd/system/tailscale.service`. The override file to reconfigure the services `Exec` commands is installed at `/etc/systemd/system/tailscaled.service.d/override.conf`. The defaults file for the variables `PORT` and `FLAGS` is installed at `/etc/default/tailscaled`
 
 The service is then started and enabled via `systemctl`.
+
 
