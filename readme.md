@@ -1,9 +1,5 @@
 # Tailscale on the Steam Deck
 
-This process is derived from the [official guide](https://tailscale.com/blog/steam-deck), but has been
-tweaked to make the process smoother and produce an installation that comes up
-automatically on boot (no need to enter desktop mode).
-
 ## Installing Tailscale
 
 1. Clone this repo to your Deck, switch to root and enter the directory:
@@ -53,7 +49,10 @@ Resolution: Delete `/etc/default/tailscaled` and re-run installer script.
 
 ## How it works
 
+This script is derived from the [original guide](https://tailscale.com/blog/steam-deck), but has been
+tweaked to make the process smoother and produce an installation that comes up
+automatically on boot (no need to enter desktop mode).
+
 The Tailscale binaries `tailscale` and `tailscaled` are installed in `/opt/tailscale/`. The Tailscale systemd unit file is installed at `/etc/systemd/system/tailscale.service`. The override file to reconfigure the services `Exec` commands is installed at `/etc/systemd/system/tailscaled.service.d/override.conf`. The defaults file for the variables `PORT` and `FLAGS` is installed at `/etc/default/tailscaled`
 
 The service is then started and enabled via `systemctl`.
-
