@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# tailscale-deck-update
+# Intended to run as root (systemd timer). If tailscale is present, try built-in update;
+# if that fails, re-run the installer. If not installed, run installer.
+
+RAW_INSTALLER_URL="https://raw.githubusercontent.com/thatsthequy/deck-tailscale/main/tailscale.sh"
+
+log() { echo "[$(date -Is)] $*"; }
+
+if command -v tailscale >/dev/null 2>&1; then
+  log "Found tailscale binary; attempting 'tailscale update'..."
+  if tailscale update; then
+    log "tailscale update succeeded."
+  else
+    log "tailscale update failed; rerunning installer."
+    curl -fsSL "${RAW_INSTALLER_URL}" | bash
+  fi
+
+  # Try enabling auto-update (non-fatal)
+  if command -v tailscale >/dev/null 2>&1; then
+    tailscale set --auto-update || true
+  fi
+else
+  log "tailscale not found; running installer."
+  curl -fsSL "${RAW_INSTALLER_URL}" | bash
+fi
+
+log "Done."

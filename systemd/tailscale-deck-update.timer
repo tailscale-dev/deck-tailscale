@@ -1,0 +1,10 @@
+[Unit]
+Description=Run tailscale-deck-update daily
+
+[Timer]
+OnBootSec=10min
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target

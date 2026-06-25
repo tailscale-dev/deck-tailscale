@@ -1,0 +1,8 @@
+[Unit]
+Description=Tailscale auto-update for Steam Deck
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/tailscale-deck-update
