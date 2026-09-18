@@ -39,6 +39,11 @@ recommended to tweak those files directly. The configuration file at
 `/etc/default/tailscaled` is left alone. The configuration file at
 `/etc/systemd/system/tailscaled.service.d/override.conf` is reset every time this script is run to ensure the path to the binary is correct, but the preexisting file will be backed up in that directory as `override.conf.bak`. If something goes wrong, copy those files somewhere else and re-run the install script to get back to a working state.
 
+## Uninstalling Tailscale
+
+1. `cd ~/deck-tailscale`
+2. Run `sudo bash uninstall.sh`
+
 ## Common issues
 
 ### Broken config file
