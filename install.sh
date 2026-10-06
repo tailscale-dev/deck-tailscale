@@ -106,14 +106,27 @@ fi
 $SUDO tee /etc/systemd/system/tailscaled.service.d/override.conf > /dev/null <<'EOF'
 [Service]
 EnvironmentFile=/etc/default/tailscaled
+ExecStartPre=
+ExecStartPre=/opt/tailscale/tailscaled --cleanup
 ExecStart=
-ExecStart=/opt/tailscale/tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --port=$PORT $FLAGS
+ExecStart=/opt/tailscale/tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --port=${PORT} $FLAGS
+ExecStopPost=
+ExecStopPost=/opt/tailscale/tailscaled --cleanup
 EOF
 
 # Reload and start service
 $SUDO systemctl daemon-reload
 $SUDO systemctl enable tailscaled &>/dev/null || true
-$SUDO systemctl restart tailscaled &>/dev/null || true
+$SUDO systemctl restart tailscaled
+
+# Wait for tailscaled daemon to be active and socket to be ready
+echo "Waiting for Tailscale daemon to be ready..."
+for i in {1..15}; do
+  if [ -S /run/tailscale/tailscaled.sock ] && $SUDO /opt/tailscale/tailscale status --json &>/dev/null; then
+    break
+  fi
+  sleep 1
+done
 
 echo "Tailscale daemon (tailscaled) is installed and active."
 echo ""
@@ -121,7 +134,7 @@ echo "Connecting Tailscale to your network..."
 echo "(Scan the QR code with your phone to log in)"
 echo ""
 
-/opt/tailscale/tailscale up --qr --operator="${TARGET_USER}" --ssh || true
+$SUDO /opt/tailscale/tailscale up --qr --operator="${TARGET_USER}" --ssh || true
 
 echo ""
 echo "========================================="

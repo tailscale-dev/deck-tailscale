@@ -102,8 +102,12 @@ else
   cat <<'EOF' > /etc/systemd/system/tailscaled.service.d/override.conf
 [Service]
 EnvironmentFile=/etc/default/tailscaled
+ExecStartPre=
+ExecStartPre=/opt/tailscale/tailscaled --cleanup
 ExecStart=
-ExecStart=/opt/tailscale/tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --port=$PORT $FLAGS
+ExecStart=/opt/tailscale/tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --port=${PORT} $FLAGS
+ExecStopPost=
+ExecStopPost=/opt/tailscale/tailscaled --cleanup
 EOF
 fi
 
