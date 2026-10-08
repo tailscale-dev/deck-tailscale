@@ -1,6 +1,18 @@
 # Tailscale on the Steam Deck
 
-## Installing Tailscale
+## Quick Install (Recommended)
+
+Open **Konsole** in Desktop Mode and run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/tailscale-dev/deck-tailscale/main/install.sh | bash
+```
+
+Enter your `sudo` password when prompted. The installer will download Tailscale, configure the systemd service, and display a login QR code.
+
+---
+
+## Manual Installation
 
 1. Clone this repo to your Deck, switch to root and enter the directory:
    1. `git clone https://github.com/tailscale-dev/deck-tailscale.git ~/deck-tailscale`
@@ -12,12 +24,26 @@
 4. Run `tailscale up --qr --operator=deck --ssh` to have Tailscale generate
    a login QR code. Scan the code with your phone and authenticate with
    Tailscale to bring your Deck onto your network.
+5. Run `exit` to return to your normal user shell once you're done.
 
 ## Updating Tailscale
 
-Tailscale should be able to update itself now! Try running
-`sudo tailscale update`, and if that works, `sudo tailscale set --auto-update`.
-If it doesn't, keep reading.
+Tailscale should be able to update itself now!
+
+If you are still in the root shell from the installation steps above, run:
+```bash
+tailscale update
+tailscale set --auto-update
+```
+
+If you are running as the standard `deck` user, `sudo` will not find `tailscale` directly because `/opt/tailscale` is not in `sudo`'s default `secure_path`. Use the full binary path for the update:
+```bash
+sudo /opt/tailscale/tailscale update
+tailscale set --auto-update
+```
+*(Note: `--operator=deck` was configured during installation, so `tailscale set` can be run without `sudo`.)*
+
+If it doesn't work, keep reading.
 
 > ⚠️ This process will most likely fail if you are accessing the terminal over
 > Tailscale SSH, as it seems to be locked in a chroot jail. You should start and

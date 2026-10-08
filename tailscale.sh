@@ -94,9 +94,22 @@ if test -f /etc/systemd/system/tailscaled.service.d/override.conf; then
   rm /etc/systemd/system/tailscaled.service.d/override.conf
 fi
 
-# copy our override file in
+# copy or create our override file
 mkdir -p /etc/systemd/system/tailscaled.service.d
-cp -f override.conf /etc/systemd/system/tailscaled.service.d/override.conf
+if test -f override.conf; then
+  cp -f override.conf /etc/systemd/system/tailscaled.service.d/override.conf
+else
+  cat <<'EOF' > /etc/systemd/system/tailscaled.service.d/override.conf
+[Service]
+EnvironmentFile=/etc/default/tailscaled
+ExecStartPre=
+ExecStartPre=/opt/tailscale/tailscaled --cleanup
+ExecStart=
+ExecStart=/opt/tailscale/tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --port=${PORT} $FLAGS
+ExecStopPost=
+ExecStopPost=/opt/tailscale/tailscaled --cleanup
+EOF
+fi
 
 # capture the above override file in systemd
 systemctl daemon-reload
