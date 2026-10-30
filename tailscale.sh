@@ -59,11 +59,12 @@ mkdir -p /opt/tailscale
 cp -rf $tar_dir/tailscale /opt/tailscale/tailscale
 cp -rf $tar_dir/tailscaled /opt/tailscale/tailscaled
 
-# add binaries to path via profile.d
-if ! test -f /etc/profile.d/tailscale.sh; then
-  echo 'PATH="$PATH:/opt/tailscale"' >> /etc/profile.d/tailscale.sh
-  source /etc/profile.d/tailscale.sh
-fi
+# add binaries to path via profile.d. Written on every run, so an older install
+# gets the check that stops a second copy being appended to PATH
+cat <<'EOF' > /etc/profile.d/tailscale.sh
+case ":$PATH:" in *:/opt/tailscale:*) ;; *) PATH="$PATH:/opt/tailscale" ;; esac
+EOF
+source /etc/profile.d/tailscale.sh
 
 # copy the systemd file into place
 cp -rf $tar_dir/systemd/tailscaled.service /etc/systemd/system/tailscaled.service
