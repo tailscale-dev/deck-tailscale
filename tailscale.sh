@@ -15,8 +15,15 @@ cd "${dir}"
 
 echo -n "Getting version..."
 
+# map the machine architecture to Tailscale's naming
+case "$(uname -m)" in
+  x86_64) arch=amd64 ;;
+  aarch64) arch=arm64 ;;
+  *) echo "unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+esac
+
 # get info for the latest version of Tailscale
-tarball="$(curl -s 'https://pkgs.tailscale.com/stable/?mode=json' | jq -r .Tarballs.amd64)"
+tarball="$(curl -s 'https://pkgs.tailscale.com/stable/?mode=json' | jq -r ".Tarballs.${arch}")"
 version="$(echo ${tarball} | cut -d_ -f2)"
 
 echo "got ${version}."
